@@ -32,7 +32,7 @@ internal class CloudTranslationTelegramBot(
 
         var chatId = message.Chat.Id;
 
-        var state = chatStateMachine.ProcessInput(chatId, text);
+        var state = chatStateMachine.ProcessInput(chatId, text.ToLower());
         
         var sourceKeyboard = GetLanguagesOneTimeKeyboard(17);
 
