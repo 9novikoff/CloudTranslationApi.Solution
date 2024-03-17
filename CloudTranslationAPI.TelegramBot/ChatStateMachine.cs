@@ -46,6 +46,14 @@ public class ChatStateMachine
     {
         _chatStates.Remove(chatId);
     }
+
+    public void SetSourceLanguageState(long chatId)
+    {
+        _chatStates[chatId] = new State()
+        {
+            StateCode = StateCode.SourceLanguage
+        };
+    }
 }
 
 public class State

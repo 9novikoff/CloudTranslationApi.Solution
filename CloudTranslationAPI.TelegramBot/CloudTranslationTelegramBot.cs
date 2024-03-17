@@ -33,11 +33,12 @@ internal class CloudTranslationTelegramBot(
         var chatId = message.Chat.Id;
 
         var state = chatStateMachine.ProcessInput(chatId, text);
+        
+        var sourceKeyboard = GetLanguagesOneTimeKeyboard(17);
 
         switch (state.StateCode)
         {
             case StateCode.SourceLanguage:
-                var sourceKeyboard = GetLanguagesOneTimeKeyboard(17);
                 await botClient.SendTextMessageAsync(chatId: chatId, text: TelegramBotResponses.EnterSourceLanguage, replyMarkup: sourceKeyboard,  cancellationToken: cancellationToken);
                 break;
             
@@ -46,8 +47,7 @@ internal class CloudTranslationTelegramBot(
                 break;
             
             case StateCode.TargetLanguage:
-                var targetKeyboard = GetLanguagesOneTimeKeyboard(17);
-                await botClient.SendTextMessageAsync(chatId: chatId, text: TelegramBotResponses.EnterTargetLanguage, replyMarkup: targetKeyboard, cancellationToken: cancellationToken);
+                await botClient.SendTextMessageAsync(chatId: chatId, text: TelegramBotResponses.EnterTargetLanguage, replyMarkup: sourceKeyboard, cancellationToken: cancellationToken);
                 break;
             
             case StateCode.Final:
@@ -66,7 +66,8 @@ internal class CloudTranslationTelegramBot(
                         await botClient.SendTextMessageAsync(chatId: chatId, text: TelegramBotResponses.ErrorMessage, cancellationToken: cancellationToken);
                     }
                 }
-                chatStateMachine.RemoveChat(chatId);
+                chatStateMachine.SetSourceLanguageState(chatId);
+                await botClient.SendTextMessageAsync(chatId: chatId, text: TelegramBotResponses.EnterSourceLanguage, replyMarkup: sourceKeyboard,  cancellationToken: cancellationToken);
                 break;
         }        
 
